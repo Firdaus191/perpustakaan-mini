@@ -23,7 +23,7 @@
 
 <hr>
 
-<form action="{{ route('buku.store') }}" method="POST">
+<form action="{{ route('buku.store') }}" method="POST" enctype="multipart/form-data">
 
 @csrf
 
@@ -132,6 +132,27 @@
             class="form-control"
             min="0"
             required>
+
+    </div>
+
+</div>
+
+<div class="form-group row">
+
+    <div class="col-md-12">
+
+        <label>Cover Buku</label>
+
+        <input
+            type="file"
+            name="cover_image"
+            class="form-control-file @error('cover_image') is-invalid @enderror">
+
+        <small class="text-muted">Format gambar: jpeg, png, jpg, gif (Max 2MB). Opsional.</small>
+
+        @error('cover_image')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
 
     </div>
 

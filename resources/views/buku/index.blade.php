@@ -41,6 +41,7 @@
 <thead>
 <tr>
     <th>No</th>
+    <th>Cover</th>
     <th>Kode</th>
     <th>Judul Buku</th>
     <th>Penulis</th>
@@ -59,6 +60,14 @@
 <tr>
 
     <td>{{ $index + 1 }}</td>
+
+    <td>
+        @if($item->cover_image)
+            <img src="{{ asset('storage/covers/'.$item->cover_image) }}" alt="Cover" style="width: 50px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+        @else
+            <span class="badge badge-secondary">No Cover</span>
+        @endif
+    </td>
 
     <td>{{ $item->kode_buku }}</td>
 

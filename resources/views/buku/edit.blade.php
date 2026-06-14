@@ -23,7 +23,7 @@
 
 <hr>
 
-<form action="{{ route('buku.update', $buku->id) }}" method="POST">
+<form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
 
 @csrf
 
@@ -133,6 +133,34 @@
             class="form-control"
             value="{{ $buku->stok }}"
             required>
+
+    </div>
+
+</div>
+
+<div class="form-group row">
+
+    <div class="col-md-12">
+
+        <label>Cover Buku</label>
+
+        @if($buku->cover_image)
+            <div class="mb-2">
+                <img src="{{ asset('storage/covers/'.$buku->cover_image) }}" alt="Cover Current" style="width: 80px; height: 120px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;">
+                <p class="small text-muted mb-0">Cover Saat Ini</p>
+            </div>
+        @endif
+
+        <input
+            type="file"
+            name="cover_image"
+            class="form-control-file @error('cover_image') is-invalid @enderror">
+
+        <small class="text-muted">Format gambar: jpeg, png, jpg, gif (Max 2MB). Biarkan kosong jika tidak ingin mengubah cover.</small>
+
+        @error('cover_image')
+            <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
 
     </div>
 

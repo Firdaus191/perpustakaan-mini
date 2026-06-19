@@ -22,6 +22,7 @@ class RegisterController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'no_hp' => 'required|string|max:15',
             'jenis_kelamin' => 'required|in:L,P',
+            'alamat' => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ]);
 
@@ -34,13 +35,17 @@ class RegisterController extends Controller
                     'role' => 'user', // force role to user
                 ]);
 
+                $lastAnggota = Anggota::latest('id')->first();
+                $nextId = $lastAnggota ? $lastAnggota->id + 1 : 1;
+                $kodeAnggota = 'AGT' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
                 Anggota::create([
-                    'kode_anggota' => 'AGT' . rand(1000, 9999),
+                    'kode_anggota' => $kodeAnggota,
                     'nama' => $request->name,
                     'email' => $request->email,
                     'no_hp' => $request->no_hp,
                     'jenis_kelamin' => $request->jenis_kelamin,
-                    'alamat' => '-', // default
+                    'alamat' => $request->alamat,
                 ]);
             });
 

@@ -60,7 +60,7 @@ public function update(Request $request, int $id)
     try {
 
         $request->validate([
-            'kode_kategori' => 'required',
+            'kode_kategori' => 'required|unique:kategoris,kode_kategori,' . $id,
             'nama_kategori' => 'required'
         ]);
 

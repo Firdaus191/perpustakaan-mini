@@ -40,26 +40,4 @@ class PengembalianController extends Controller
             )
         );
     }
-
-    // Proses Pengembalian
-    public function kembalikan(int $id)
-    {
-        $pinjam = Peminjaman::findOrFail($id);
-
-        if ($pinjam->status == 'Dipinjam') {
-
-            $pinjam->update([
-                'status' => 'Dikembalikan'
-            ]);
-
-            $pinjam->buku->increment('stok');
-        }
-
-        return redirect()
-            ->route('pengembalian.index')
-            ->with(
-                'success',
-                'Buku berhasil dikembalikan.'
-            );
-    }
 }

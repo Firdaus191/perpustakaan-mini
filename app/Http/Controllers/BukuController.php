@@ -44,7 +44,7 @@ class BukuController extends Controller
             $filename = null;
             if ($request->hasFile('cover_image')) {
                 $file = $request->file('cover_image');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time() . '_' . $file->hashName();
                 $file->storeAs('covers', $filename, 'public');
             }
 
@@ -62,12 +62,10 @@ class BukuController extends Controller
             return redirect()
                 ->route('buku.index')
                 ->with('success', 'Data buku berhasil ditambahkan');
-
         } catch (\Exception $e) {
 
             return back()
                 ->with('error', 'Gagal: ' . $e->getMessage());
-
         }
     }
 
@@ -106,7 +104,7 @@ class BukuController extends Controller
                 }
 
                 $file = $request->file('cover_image');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time() . '_' . $file->hashName();
                 $file->storeAs('covers', $filename, 'public');
             }
 
@@ -124,12 +122,10 @@ class BukuController extends Controller
             return redirect()
                 ->route('buku.index')
                 ->with('success', 'Data buku berhasil diperbarui');
-
         } catch (\Exception $e) {
 
             return back()
                 ->with('error', 'Gagal update: ' . $e->getMessage());
-
         }
     }
 
@@ -150,13 +146,11 @@ class BukuController extends Controller
             return redirect()
                 ->route('buku.index')
                 ->with('success', 'Data buku berhasil dihapus');
-
         } catch (\Exception $e) {
 
             return redirect()
                 ->route('buku.index')
                 ->with('error', 'Gagal menghapus data');
-
         }
     }
 }

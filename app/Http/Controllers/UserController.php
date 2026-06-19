@@ -72,7 +72,7 @@ class UserController extends Controller
     // Daftar Buku
     public function buku()
     {
-        $buku = Buku::when(request('search'), function($query) {
+        $buku = Buku::with('kategori')->when(request('search'), function($query) {
             $query->where('judul', 'like', '%' . request('search') . '%');
         })->paginate(10);
 

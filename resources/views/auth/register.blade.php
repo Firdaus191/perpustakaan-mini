@@ -257,8 +257,23 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label>Alamat Lengkap</label>
+                                        <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan Alamat Lengkap" style="background-color: transparent !important; color: #F8FAFC !important; border: 1px solid #334155 !important; border-radius: 4px;" required></textarea>
+                                        @error('alamat')
+                                        <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
                                         <label>Password</label>
-                                        <input type="password" name="password" class="form-control" required>
+                                        <div class="input-group">
+                                            <input type="password" name="password" class="form-control" style="border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important;" required>
+                                            <div class="input-group-append" style="cursor: pointer;">
+                                                <span class="input-group-text" style="background-color: #1E293B; border: 1px solid #475569; color: #94A3B8; border-left: none; border-top-right-radius: 6px; border-bottom-right-radius: 6px;">
+                                                    <i class="fa fa-eye toggle-password"></i>
+                                                </span>
+                                            </div>
+                                        </div>
                                         @error('password')
                                         <small class="text-danger">{{ $message }}</small>
                                         @enderror
@@ -293,6 +308,23 @@
 
     </div>
 
+    <script>
+        document.querySelectorAll('.input-group-append').forEach(function(append) {
+            append.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('input');
+                const icon = this.querySelector('.toggle-password');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

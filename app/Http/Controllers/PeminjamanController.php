@@ -94,11 +94,21 @@ class PeminjamanController extends Controller
         try {
             DB::transaction(function () use ($request, $id) {
                 $peminjaman = Peminjaman::findOrFail($id);
+                $statusLama = $peminjaman->getOriginal('status');
 
+                // Jika booking disetujui menjadi dipinjam
+                if ($statusLama == 'booking' && $request->status == 'dipinjam') {
+                    $buku = Buku::where('id', $peminjaman->buku_id)->lockForUpdate()->firstOrFail();
+                    $buku->stok -= 1;
+                    if ($buku->stok <= 0) {
+                        $buku->status = 'dipinjam';
+                    }
+                    $buku->save();
+                }
                 // Jika status berubah menjadi Dikembalikan,
                 // tambahkan stok buku kembali
-                if (
-                    $peminjaman->status == 'dipinjam' &&
+                elseif (
+                    $statusLama == 'dipinjam' &&
                     $request->status == 'kembali'
                 ) {
                     $buku = Buku::where('id', $peminjaman->buku_id)->lockForUpdate()->firstOrFail();

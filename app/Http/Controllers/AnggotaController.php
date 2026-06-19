@@ -95,6 +95,8 @@ class AnggotaController extends Controller
                 'no_hp' => 'required',
             ]);
 
+            $user = User::where('email', $anggota->getOriginal('email'))->first();
+
             $anggota->update([
                 'kode_anggota' => $request->kode_anggota,
                 'nama' => $request->nama,
@@ -105,8 +107,6 @@ class AnggotaController extends Controller
             ]);
 
             // Update juga data user jika ada
-            $user = User::where('email', $anggota->email)->first();
-
             if ($user) {
                 $user->update([
                     'name' => $request->nama,

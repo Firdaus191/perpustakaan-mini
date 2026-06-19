@@ -9,6 +9,8 @@ use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +26,13 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'authenticate'])
         ->name('login.post');
 
+    // Register
+    Route::get('/register', [RegisterController::class, 'create'])
+        ->name('register');
+    
+    Route::post('/register', [RegisterController::class, 'store'])
+        ->name('register.store');
+
 });
 
 /*
@@ -37,6 +46,13 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    
+    Route::post('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
     // Dashboard User
     Route::get('/user/dashboard', [UserController::class, 'dashboard'])
@@ -165,8 +181,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/peminjaman/update/{id}', [PeminjamanController::class, 'update'])
         ->name('peminjaman.update');
 
-    Route::delete('/peminjaman/delete/{id}', [PeminjamanController::class, 'delete'])
-        ->name('peminjaman.delete');
+    // Admin Transaksi Actions
+    Route::post('/peminjaman/validasi/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'validasiBooking'])
+        ->name('peminjaman.validasi');
+        
+    Route::post('/peminjaman/perpanjang/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'perpanjangWaktu'])
+        ->name('peminjaman.perpanjang');
 
     /*
     |--------------------------------------------------------------------------
@@ -177,7 +197,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/pengembalian', [PengembalianController::class, 'index'])
         ->name('pengembalian.index');
 
-    Route::post('/pengembalian/{id}', [PengembalianController::class, 'kembalikan'])
+    Route::post('/pengembalian/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'prosesKembali'])
         ->name('pengembalian.kembalikan');
 
 });

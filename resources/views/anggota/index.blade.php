@@ -5,123 +5,122 @@
 @section('content')
 
 <div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-body">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
 
-<h4 class="card-title">Data Anggota</h4>
+                <h4 class="card-title">Data Anggota</h4>
 
-{{-- NOTIFIKASI --}}
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show">
-    {{ session('success') }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-</div>
-@endif
+                {{-- NOTIFIKASI --}}
+                @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                @endif
 
-@if(session('error'))
-<div class="alert alert-danger alert-dismissible fade show">
-    {{ session('error') }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-</div>
-@endif
+                @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                @endif
 
-<div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-end mb-3">
 
-    <a href="{{ route('anggota.create') }}" class="btn btn-primary btn-sm">
-        + Tambah Anggota
-    </a>
+                    <a href="{{ route('anggota.create') }}" class="btn btn-primary btn-sm">
+                        + Tambah Anggota
+                    </a>
 
-</div>
+                </div>
 
-<div class="table-responsive">
+                <div class="table-responsive">
 
-<table id="tabelAnggota" class="table table-striped table-bordered">
+                    <table id="tabelAnggota" class="table table-striped table-bordered">
 
-<thead>
+                        <thead>
 
-<tr>
+                            <tr>
 
-    <th>No</th>
+                                <th>No</th>
 
-    <th>Kode Anggota</th>
+                                <th>Kode Anggota</th>
 
-    <th>Nama</th>
+                                <th>Nama</th>
 
-    <th>Jenis Kelamin</th>
+                                <th>Jenis Kelamin</th>
 
-    <th>No HP</th>
+                                <th>No HP</th>
 
-    <th>Email</th>
+                                <th>Email</th>
 
-    <th>Aksi</th>
+                                <th>Aksi</th>
 
-</tr>
+                            </tr>
 
-</thead>
+                        </thead>
 
-<tbody>
+                        <tbody>
 
-@foreach($anggota as $index => $item)
+                            @foreach($anggota as $index => $item)
 
-<tr>
+                            <tr>
 
-    <td>{{ $index + 1 }}</td>
+                                <td>{{ $index + 1 }}</td>
 
-    <td>{{ $item->kode_anggota }}</td>
+                                <td>{{ $item->kode_anggota }}</td>
 
-    <td>{{ $item->nama }}</td>
+                                <td>{{ $item->nama }}</td>
 
-    <td>
+                                <td>
 
-        {{ $item->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                    {{ $item->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}
 
-    </td>
+                                </td>
 
-    <td>{{ $item->no_hp }}</td>
+                                <td>{{ $item->no_hp }}</td>
 
-    <td>{{ $item->email }}</td>
+                                <td>{{ $item->email }}</td>
 
-    <td>
+                                <td>
 
-        <a href="{{ route('anggota.edit',$item->id) }}"
-            class="btn btn-success btn-sm">
+                                    <a href="{{ route('anggota.edit',$item->id) }}"
+                                        class="btn btn-success btn-sm">
 
-            Edit
+                                        Edit
 
-        </a>
+                                    </a>
 
-        <form action="{{ route('anggota.delete',$item->id) }}"
-            method="POST"
-            style="display:inline;"
-            onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
+                                    <form action="{{ route('anggota.delete', $item->id) }}"
+                                        method="POST"
+                                        class="d-inline form-konfirmasi">
 
-            @csrf
-            @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
 
-            <button class="btn btn-danger btn-sm">
+                                        <button class="btn btn-danger btn-sm">
 
-                Hapus
+                                            Hapus
 
-            </button>
+                                        </button>
 
-        </form>
+                                    </form>
 
-    </td>
+                                </td>
 
-</tr>
+                            </tr>
 
-@endforeach
+                            @endforeach
 
-</tbody>
+                        </tbody>
 
-</table>
+                    </table>
 
-</div>
+                </div>
 
-</div>
-</div>
-</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -129,13 +128,11 @@
 @section('scripts')
 
 <script>
+    $(document).ready(function() {
 
-$(document).ready(function(){
+        $('#tabelAnggota').DataTable();
 
-    $('#tabelAnggota').DataTable();
-
-});
-
+    });
 </script>
 
 @endsection

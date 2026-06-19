@@ -72,7 +72,7 @@ class AnggotaController extends Controller
     }
 
     // FORM EDIT
-    public function edit($id)
+    public function edit(int $id)
     {
         $anggota = Anggota::findOrFail($id);
 
@@ -80,7 +80,7 @@ class AnggotaController extends Controller
     }
 
     // UPDATE
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         try {
 
@@ -128,7 +128,7 @@ class AnggotaController extends Controller
     }
 
     // DELETE
-    public function delete($id)
+    public function delete(int $id)
     {
         try {
 

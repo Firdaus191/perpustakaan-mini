@@ -19,13 +19,33 @@ class DashboardController extends Controller
 
         $totalPeminjaman = Peminjaman::where(
             'status',
-            'Dipinjam'
+            'dipinjam'
         )->count();
 
         $totalPengembalian = Peminjaman::where(
             'status',
-            'Dikembalikan'
+            'kembali'
         )->count();
+
+        $totalTerlambat = Peminjaman::where('status', 'dipinjam')
+            ->whereDate('tanggal_kembali', '<', now())
+            ->count();
+
+        $peminjamanTerlambat = Peminjaman::with(['anggota', 'buku'])
+            ->where('status', 'dipinjam')
+            ->whereDate('tanggal_kembali', '<', now())
+            ->get();
+
+        foreach ($peminjamanTerlambat as $trx) {
+            $jatuhTempo = \Carbon\Carbon::parse($trx->tanggal_kembali)->startOfDay();
+            $hariIni = \Carbon\Carbon::now()->startOfDay();
+            $trx->telat_hari = 0;
+            $trx->total_denda = 0;
+            if ($hariIni->greaterThan($jatuhTempo) && $trx->status == 'dipinjam') {
+                $trx->telat_hari = $jatuhTempo->diffInDays($hariIni);
+                $trx->total_denda = $trx->telat_hari * 2000;
+            }
+        }
 
         return view(
             'dashboard',
@@ -34,7 +54,9 @@ class DashboardController extends Controller
                 'totalKategori',
                 'totalAnggota',
                 'totalPeminjaman',
-                'totalPengembalian'
+                'totalPengembalian',
+                'totalTerlambat',
+                'peminjamanTerlambat'
             )
         );
     }

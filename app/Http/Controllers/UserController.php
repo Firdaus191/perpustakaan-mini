@@ -12,13 +12,69 @@ class UserController extends Controller
     // Dashboard User
     public function dashboard()
     {
-        return view('user.dashboard');
+        $anggota = Anggota::where('email', Auth::user()->email)->first();
+        
+        $dipinjamCount = 0;
+        $jatuhTempoTerdekat = null;
+        $totalDibaca = 0;
+        $peminjamanAktif = collect();
+        
+        if ($anggota) {
+            $dipinjamCount = Peminjaman::where('anggota_id', $anggota->id)
+                ->whereIn('status', ['booking', 'dipinjam'])
+                ->count();
+                
+            $peminjamanAktif = Peminjaman::with('buku')
+                ->where('anggota_id', $anggota->id)
+                ->whereIn('status', ['booking', 'dipinjam'])
+                ->orderBy('tanggal_kembali', 'asc')
+                ->get();
+                
+            $jatuhTempoTerdekat = Peminjaman::where('anggota_id', $anggota->id)
+                ->where('status', 'dipinjam')
+                ->orderBy('tanggal_kembali', 'asc')
+                ->value('tanggal_kembali');
+                
+            $totalDibaca = Peminjaman::where('anggota_id', $anggota->id)
+                ->where('status', 'kembali')
+                ->count();
+
+            // Calculate total tagihan denda
+            $totalTagihanDenda = 0;
+            $peminjamanTelat = Peminjaman::where('anggota_id', $anggota->id)
+                ->where('status', 'dipinjam')
+                ->whereDate('tanggal_kembali', '<', \Carbon\Carbon::now()->toDateString())
+                ->get();
+            
+            foreach($peminjamanTelat as $trx) {
+                $jatuhTempo = \Carbon\Carbon::parse($trx->tanggal_kembali)->startOfDay();
+                $hariIni = \Carbon\Carbon::now()->startOfDay();
+                if ($hariIni->greaterThan($jatuhTempo)) {
+                    $totalTagihanDenda += $jatuhTempo->diffInDays($hariIni) * 2000;
+                }
+            }
+        }
+
+        $rekomendasiBuku = Buku::where('status', 'tersedia')
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
+
+        return view('user.dashboard', compact(
+            'dipinjamCount', 
+            'jatuhTempoTerdekat', 
+            'totalTagihanDenda', 
+            'peminjamanAktif', 
+            'rekomendasiBuku'
+        ));
     }
 
     // Daftar Buku
     public function buku()
     {
-        $buku = Buku::all();
+        $buku = Buku::when(request('search'), function($query) {
+            $query->where('judul', 'like', '%' . request('search') . '%');
+        })->paginate(10);
 
         // Cari data anggota berdasarkan email user login
         $anggota = Anggota::where(
@@ -34,7 +90,7 @@ class UserController extends Controller
                 'anggota_id',
                 $anggota->id
             )
-            ->where('status', 'Dipinjam')
+            ->whereIn('status', ['booking', 'dipinjam'])
             ->pluck('buku_id')
             ->toArray();
 
@@ -78,7 +134,7 @@ class UserController extends Controller
     }
 
     // Proses Pinjam Buku
-    public function pinjam($id)
+    public function pinjam(int $id)
     {
         // Cari anggota berdasarkan email user login
         $anggota = Anggota::where(
@@ -108,10 +164,10 @@ class UserController extends Controller
 
         }
 
-        // Cek apakah user masih meminjam buku yang sama
+        // Cek apakah user masih meminjam atau booking buku yang sama
         $cek = Peminjaman::where('anggota_id', $anggota->id)
             ->where('buku_id', $buku->id)
-            ->where('status', 'Dipinjam')
+            ->whereIn('status', ['booking', 'dipinjam'])
             ->first();
 
         if ($cek) {
@@ -130,43 +186,32 @@ class UserController extends Controller
             'buku_id'         => $buku->id,
             'tanggal_pinjam'  => now()->toDateString(),
             'tanggal_kembali' => now()->addDays(7)->toDateString(),
-            'status'          => 'Dipinjam',
+            'status'          => 'booking',
 
         ]);
 
-        // Kurangi stok buku
-        $buku->decrement('stok');
-
         return back()->with(
             'success',
-            'Buku berhasil dipinjam.'
+            'Buku berhasil dibooking, menunggu validasi admin.'
         );
     }
 
     // Proses Kembalikan Buku
-    public function kembalikan($id)
+    public function kembalikan(int $id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if ($peminjaman->status == 'Dipinjam') {
+        if ($peminjaman->status == 'dipinjam') {
 
             $peminjaman->update([
-                'status' => 'Dikembalikan'
+                'status' => 'menunggu_pengembalian'
             ]);
-
-            $buku = Buku::find($peminjaman->buku_id);
-
-            if ($buku) {
-
-                $buku->increment('stok');
-
-            }
 
         }
 
         return back()->with(
             'success',
-            'Buku berhasil dikembalikan.'
+            'Permintaan pengembalian dikirim, menunggu admin.'
         );
     }
 }

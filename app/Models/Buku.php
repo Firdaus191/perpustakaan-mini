@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Buku extends Model
 {
+    use HasFactory;
+
     protected $table = 'bukus';
 
     protected $fillable = [
@@ -16,7 +19,8 @@ class Buku extends Model
         'tahun_terbit',
         'kategori_id',
         'stok',
-        'cover_image'
+        'cover_image',
+        'status'
     ];
 
     public function kategori()

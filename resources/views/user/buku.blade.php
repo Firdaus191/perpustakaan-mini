@@ -16,6 +16,15 @@
 
                 <hr>
 
+                <form method="GET" action="{{ route('user.buku') }}" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Cari judul buku..." value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Cari</button>
+                        </div>
+                    </div>
+                </form>
+
                 @if(session('success'))
 
                     <div class="alert alert-success">
@@ -64,7 +73,7 @@
 
                             <td>
                                 @if($item->cover_image)
-                                    <img src="{{ asset('storage/covers/'.$item->cover_image) }}" alt="Cover" style="width: 50px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    <img src="{{ $item->cover_image }}" onerror="this.src='https://via.placeholder.com/50x70?text=No+Cover'" alt="Cover" style="width: 50px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                                 @else
                                     <span class="badge badge-secondary">No Cover</span>
                                 @endif
@@ -137,6 +146,10 @@
                     </tbody>
 
                 </table>
+
+                <div class="mt-3">
+                    {{ $buku->appends(request()->query())->links('pagination::bootstrap-4') }}
+                </div>
 
             </div>
 

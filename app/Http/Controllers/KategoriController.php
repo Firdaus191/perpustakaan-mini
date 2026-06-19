@@ -47,7 +47,7 @@ class KategoriController extends Controller
     }
 
     // FORM EDIT
-public function edit($id)
+public function edit(int $id)
 {
     $kategori = Kategori::findOrFail($id);
 
@@ -55,7 +55,7 @@ public function edit($id)
 }
 
 // UPDATE
-public function update(Request $request, $id)
+public function update(Request $request, int $id)
 {
     try {
 
@@ -86,7 +86,7 @@ public function update(Request $request, $id)
 }
 
     // DELETE
-    public function delete($id)
+    public function delete(int $id)
     {
         Kategori::findOrFail($id)->delete();
 

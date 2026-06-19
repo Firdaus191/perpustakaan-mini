@@ -72,7 +72,7 @@ class BukuController extends Controller
     }
 
     // FORM EDIT
-    public function edit($id)
+    public function edit(int $id)
     {
         $buku = Buku::findOrFail($id);
         $kategori = Kategori::all();
@@ -81,7 +81,7 @@ class BukuController extends Controller
     }
 
     // UPDATE
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         try {
 
@@ -134,7 +134,7 @@ class BukuController extends Controller
     }
 
     // DELETE
-    public function delete($id)
+    public function delete(int $id)
     {
         try {
 

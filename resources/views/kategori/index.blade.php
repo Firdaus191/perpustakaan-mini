@@ -77,8 +77,7 @@
 
                                     <form action="{{ route('kategori.delete',$item->id) }}"
                                         method="POST"
-                                        style="display:inline;"
-                                        onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
+                                        class="d-inline form-konfirmasi">
 
                                         @csrf
                                         @method('DELETE')
@@ -111,13 +110,11 @@
 @section('scripts')
 
 <script>
+    $(document).ready(function() {
 
-$(document).ready(function(){
+        $('#tabelKategori').DataTable();
 
-    $('#tabelKategori').DataTable();
-
-});
-
+    });
 </script>
 
 @endsection

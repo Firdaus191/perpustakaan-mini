@@ -1,58 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📚 Perpustakaan Mini - Sistem Manajemen Perpustakaan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<div align="center">
+  <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel" />
+  <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+</div>
 
-## About Laravel
+<br>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Perpustakaan Mini** adalah aplikasi berbasis web modern yang dirancang untuk mempermudah pengelolaan perpustakaan berskala kecil hingga menengah. Mengusung antarmuka yang bersih dan intuitif, sistem ini memfasilitasi administrasi buku, manajemen anggota, hingga pelacakan siklus sirkulasi (peminjaman dan pengembalian) secara efisien, transparan, dan terotomatisasi.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Dibangun di atas ekosistem Laravel yang tangguh, sistem ini menawarkan performa tinggi, keamanan yang solid, serta kemudahan untuk skalabilitas di masa depan.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📑 Daftar Isi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- [Fitur Utama](#-fitur-utama)
+- [Tech Stack](#-tech-stack)
+- [Akun Demo](#-akun-demo)
+- [Panduan Instalasi](#-panduan-instalasi)
+- [Tips & Catatan Pengembangan](#-tips--catatan-pengembangan)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## ✨ Fitur Utama
 
-## Agentic Development
+Sistem ini membagi fungsionalitasnya berdasarkan hak akses pengguna (Role) untuk menjaga keamanan dan privasi data.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 🛡️ Administrator (Admin)
+
+Memiliki akses penuh ke seluruh pengelolaan sistem, master data, dan sirkulasi.
+
+| ID        | Fitur                   | Deskripsi                                                                          |
+| --------- | ----------------------- | ---------------------------------------------------------------------------------- |
+| **AD-01** | **Dashboard Analitik**  | Menampilkan ringkasan statistik dan aktivitas perpustakaan.                        |
+| **AD-02** | **Manajemen Kategori**  | Menambah, mengedit, dan menghapus kategori buku.                                   |
+| **AD-03** | **Manajemen Buku**      | Mengelola katalog buku perpustakaan secara lengkap.                                |
+| **AD-04** | **Manajemen Anggota**   | Mengelola data anggota perpustakaan yang terdaftar.                                |
+| **AD-05** | **Kelola Peminjaman**   | Validasi _booking_ peminjaman, perpanjangan waktu, dan manajemen sirkulasi keluar. |
+| **AD-06** | **Kelola Pengembalian** | Memproses pengembalian buku dan melacak status keterlambatan (jika ada).           |
+
+### 👤 Pengguna (User / Anggota)
+
+Memiliki akses untuk melakukan peminjaman mandiri dan melacak aktivitas mereka.
+
+| ID        | Fitur                 | Deskripsi                                                               |
+| --------- | --------------------- | ----------------------------------------------------------------------- |
+| **US-01** | **Dashboard Anggota** | Tampilan ringkasan aktivitas dan status akun bagi pengguna.             |
+| **US-02** | **Eksplorasi Buku**   | Melihat dan mencari daftar koleksi buku perpustakaan.                   |
+| **US-03** | **Peminjaman Buku**   | Melakukan permintaan atau _booking_ pinjaman buku secara online.        |
+| **US-04** | **Pengembalian Buku** | Memproses permintaan pengembalian buku ke sistem.                       |
+| **US-05** | **Riwayat Transaksi** | Melihat catatan historis seluruh aktivitas peminjaman dan pengembalian. |
+| **US-06** | **Manajemen Profil**  | Memperbarui profil personal dan kredensial akun.                        |
+
+---
+
+## 🛠️ Tech Stack
+
+Aplikasi ini dikembangkan menggunakan teknologi standar industri web modern:
+
+- **Backend:** Laravel (PHP 8.3+)
+- **Frontend:** Blade Templates, Tailwind CSS v4, Vite
+- **Database:** MySQL / SQLite
+- **Authentication:** Laravel Auth Middleware terintegrasi
+- **Styling & Assets:** Vite Asset Bundler
+
+---
+
+## 🔑 Akun Demo
+
+Anda dapat menggunakan akun berikut untuk mengeksplorasi sistem:
+
+| Role      | Email              | Password   | Deskripsi                                                             |
+| :-------- | :----------------- | :--------- | :-------------------------------------------------------------------- |
+| **Admin** | `admin@perpus.com` | `password` | Memiliki akses penuh ke seluruh modul konfigurasi dan transaksi.      |
+| **User**  | `user@perpus.com`  | `password` | Akun anggota (ANG-001) untuk mencoba simulasi peminjaman dan riwayat. |
+
+---
+
+## 🚀 Panduan Instalasi
+
+Ikuti langkah-langkah teknis di bawah ini untuk menjalankan aplikasi di lingkungan lokal Anda. Pastikan **PHP >= 8.3**, **Composer**, dan **Node.js** sudah terinstal.
+
+### 1. Clone Repository & Masuk ke Direktori
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repo-anda> perpustakaan-mini
+cd perpustakaan-mini
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instalasi Dependensi PHP (Composer)
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Instalasi Dependensi Frontend (NPM)
 
-## Code of Conduct
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Konfigurasi Environment (`.env`)
 
-## Security Vulnerabilities
+Salin file konfigurasi _environment_ bawaan (sesuaikan dengan sistem operasi Anda):
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Untuk Windows (Command Prompt / PowerShell)
+copy .env.example .env
 
-## License
+# Untuk Mac/Linux
+cp .env.example .env
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+_Catatan: Aplikasi ini menggunakan **SQLite** (`DB_CONNECTION=sqlite`) secara default. Anda **tidak perlu** repot mengatur MySQL/XAMPP. Database akan dibuat secara otomatis di langkah ke-6!_
+
+### 5. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+### 6. Migrasi Database & Seeding
+
+Jalankan perintah ini untuk membuat struktur database beserta _dummy data_ (Akun Demo, Kategori, Buku):
+
+```bash
+php artisan migrate --seed
+```
+
+*(💡 Jika muncul *prompt* "Database does not exist. Would you like to create it?", ketik `yes` lalu tekan Enter).*
+
+### 7. Build Asset Frontend (Vite)
+
+Jalankan proses _build_ Vite agar _styling_ Tailwind CSS dapat dimuat:
+
+```bash
+npm run build
+```
+
+### 8. Jalankan Local Development Server
+
+```bash
+php artisan serve
+```
+
+Aplikasi kini dapat diakses melalui browser pada URL: **`http://127.0.0.1:8000`**
+
+---
+
+## 💡 Tips & Catatan Pengembangan
+
+- **Hot Reloading:** Saat Anda melakukan modifikasi di file Blade (`.blade.php`), CSS, atau JS, buka terminal baru dan jalankan `npm run dev` agar _browser_ merender perubahan secara _real-time_ tanpa _refresh_ manual.
+- **Concurrent Scripts:** Jika Anda ingin menjalankan server dan Vite secara bersamaan dalam satu perintah, Anda dapat menjalankan `composer run dev` jika _script_ telah dikonfigurasi (lihat `composer.json` > `"scripts"`).
+- **Storage Link:** Jika proyek menggunakan upload file/gambar (misalnya _cover_ buku), pastikan Anda menjalankan `php artisan storage:link` agar file dapat diakses publik.
+
+---
+
+_Dibuat dengan ❤️ oleh Tino dkk._

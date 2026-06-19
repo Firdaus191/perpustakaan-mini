@@ -22,11 +22,11 @@
 
                 @if(session('success'))
 
-                    <div class="alert alert-success">
+                <div class="alert alert-success">
 
-                        {{ session('success') }}
+                    {{ session('success') }}
 
-                    </div>
+                </div>
 
                 @endif
 
@@ -90,11 +90,19 @@
 
                                 <td>
 
-                                    <span class="badge badge-warning">
-
-                                        {{ $item->status }}
-
-                                    </span>
+                                    @php
+                                    $jatuhTempo = \Carbon\Carbon::parse($item->tanggal_kembali)->startOfDay();
+                                    $hariIni = \Carbon\Carbon::now()->startOfDay();
+                                    @endphp
+                                    @if($hariIni->greaterThan($jatuhTempo))
+                                    @php
+                                    $telat = $jatuhTempo->diffInDays($hariIni);
+                                    $denda = $telat * 2000;
+                                    @endphp
+                                    <span class="badge badge-danger">Terlambat {{ $telat }} Hari <br> (Denda: Rp {{ number_format($denda, 0, ',', '.') }})</span>
+                                    @else
+                                    <span class="badge badge-warning">Sedang Dipinjam</span>
+                                    @endif
 
                                 </td>
 
@@ -103,7 +111,7 @@
                                     <form
                                         action="{{ route('pengembalian.kembalikan', $item->id) }}"
                                         method="POST"
-                                        onsubmit="return confirm('Yakin ingin mengembalikan buku ini?')">
+                                        class="form-konfirmasi">
 
                                         @csrf
 

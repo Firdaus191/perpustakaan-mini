@@ -25,9 +25,13 @@ return new class extends Migration
             $table->date('tanggal_kembali');
 
             $table->enum('status', [
-                'Dipinjam',
-                'Dikembalikan'
-            ])->default('Dipinjam');
+                'booking',
+                'dipinjam',
+                'menunggu_pengembalian',
+                'kembali'
+            ])->default('booking');
+
+            $table->decimal('denda', 10, 2)->default(0);
 
             $table->timestamps();
 

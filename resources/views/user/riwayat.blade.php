@@ -47,7 +47,6 @@
                             <th>Tanggal Pinjam</th>
                             <th>Tanggal Kembali</th>
                             <th>Status</th>
-                            <th>Aksi</th>
 
                         </tr>
 
@@ -68,52 +67,37 @@
                             <td>{{ $item->tanggal_kembali }}</td>
 
                             <td>
+                                @php
+                                    $isLate = false;
+                                    $telatHari = 0;
+                                    $denda = 0;
+                                    if ($item->status == 'dipinjam') {
+                                        $jatuhTempo = \Carbon\Carbon::parse($item->tanggal_kembali)->startOfDay();
+                                        $hariIni = \Carbon\Carbon::now()->startOfDay();
+                                        if ($hariIni->greaterThan($jatuhTempo)) {
+                                            $isLate = true;
+                                            $telatHari = $jatuhTempo->diffInDays($hariIni);
+                                            $denda = $telatHari * 2000;
+                                        }
+                                    }
+                                @endphp
 
-                                @if($item->status == 'Dipinjam')
-
-                                    <span class="badge badge-warning">
-
-                                        Dipinjam
-
-                                    </span>
-
+                                @if($isLate)
+                                    <span class="badge badge-danger">Terlambat {{ $telatHari }} Hari (Denda: Rp {{ number_format($denda, 0, ',', '.') }})</span>
+                                @elseif($item->status == 'dipinjam')
+                                    <span class="badge badge-warning">Sedang Dipinjam</span>
+                                @elseif($item->status == 'kembali')
+                                    <span class="badge badge-success">Dikembalikan</span>
+                                @elseif($item->status == 'booking')
+                                    <span class="badge badge-info">Booking</span>
+                                @elseif($item->status == 'menunggu_pengembalian')
+                                    <span class="badge badge-primary">Menunggu Pengembalian</span>
                                 @else
-
-                                    <span class="badge badge-success">
-
-                                        Dikembalikan
-
-                                    </span>
-
+                                    <span class="badge badge-secondary">{{ ucfirst($item->status) }}</span>
                                 @endif
-
                             </td>
 
-                            <td>
 
-                                @if($item->status == 'Dipinjam')
-
-                                    <form action="{{ route('user.kembalikan', $item->id) }}" method="POST">
-
-                                        @csrf
-
-                                        <button
-                                            type="submit"
-                                            class="btn btn-success btn-sm">
-
-                                            Kembalikan
-
-                                        </button>
-
-                                    </form>
-
-                                @else
-
-                                    -
-
-                                @endif
-
-                            </td>
 
                         </tr>
 
@@ -121,7 +105,7 @@
 
                         <tr>
 
-                            <td colspan="6" class="text-center">
+                            <td colspan="5" class="text-center">
 
                                 Belum ada riwayat peminjaman.
 

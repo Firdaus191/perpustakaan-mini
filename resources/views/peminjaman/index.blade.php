@@ -5,165 +5,145 @@
 @section('content')
 
 <div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-body">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
 
-<h4 class="card-title">Data Peminjaman</h4>
+                <h4 class="card-title">Data Peminjaman</h4>
 
-@if(session('success'))
-<div class="alert alert-success alert-dismissible fade show">
-    {{ session('success') }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-</div>
-@endif
+                @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                @endif
 
-@if(session('error'))
-<div class="alert alert-danger alert-dismissible fade show">
-    {{ session('error') }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-</div>
-@endif
+                @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                @endif
 
-<div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-end mb-3">
 
-    <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('peminjaman.create') }}" class="btn btn-primary btn-sm">
 
-        + Tambah Peminjaman
+                        + Tambah Peminjaman
 
-    </a>
+                    </a>
 
-</div>
+                </div>
 
-<div class="table-responsive">
+                <div class="table-responsive">
 
-<table id="tabelPeminjaman" class="table table-striped table-bordered">
+                    <table id="tabelPeminjaman" class="table table-striped table-bordered">
 
-<thead>
+                        <thead>
 
-<tr>
+                            <tr>
 
-    <th>No</th>
+                                <th>No</th>
 
-    <th>Anggota</th>
+                                <th>Anggota</th>
 
-    <th>Buku</th>
+                                <th>Buku</th>
 
-    <th>Tanggal Pinjam</th>
+                                <th>Tanggal Pinjam</th>
 
-    <th>Tanggal Kembali</th>
+                                <th>Tanggal Kembali</th>
 
-    <th>Status</th>
+                                <th>Status</th>
 
-    <th>Aksi</th>
+                                <th>Aksi</th>
 
-</tr>
+                            </tr>
 
-</thead>
+                        </thead>
 
-<tbody>
+                        <tbody>
 
-@foreach($peminjaman as $index => $item)
+                            @foreach($peminjaman as $index => $item)
 
-<tr>
+                            <tr>
 
-    <td>{{ $index + 1 }}</td>
+                                <td>{{ $index + 1 }}</td>
 
-    <td>
+                                <td>
 
-        {{ $item->anggota->kode_anggota }}
+                                    {{ $item->anggota->kode_anggota }}
 
-        <br>
+                                    <br>
 
-        {{ $item->anggota->nama }}
+                                    {{ $item->anggota->nama }}
 
-    </td>
+                                </td>
 
-    <td>
+                                <td>
 
-        {{ $item->buku->kode_buku }}
+                                    {{ $item->buku->kode_buku }}
 
-        <br>
+                                    <br>
 
-        {{ $item->buku->judul }}
+                                    {{ $item->buku->judul }}
 
-    </td>
+                                </td>
 
-    <td>
+                                <td>
 
-        {{ $item->tanggal_pinjam }}
+                                    {{ $item->tanggal_pinjam }}
 
-    </td>
+                                </td>
 
-    <td>
+                                <td>
 
-        {{ $item->tanggal_kembali }}
+                                    {{ $item->tanggal_kembali }}
 
-    </td>
+                                </td>
 
-    <td>
+                                <td>
 
-        @if($item->status=="Dipinjam")
+                                    @if($item->status == 'booking')
+                                        <span class="badge badge-warning">Booking</span>
+                                    @elseif($item->status == 'dipinjam')
+                                        <span class="badge badge-primary">Dipinjam</span>
+                                    @elseif($item->status == 'menunggu_pengembalian')
+                                        <span class="badge badge-danger">Menunggu Pengembalian</span>
+                                    @elseif($item->status == 'kembali')
+                                        <span class="badge badge-success">Dikembalikan</span>
+                                    @endif
 
-            <span class="badge badge-warning">
+                                </td>
 
-                Dipinjam
+                                <td>
 
-            </span>
+                                    @if($item->status == 'booking')
+                                    <form action="{{ route('peminjaman.validasi', $item->id) }}" method="POST" class="d-inline form-konfirmasi">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-sm">Validasi</button>
+                                    </form>
+                                    @endif
+                                    
+                                    <a href="{{ route('peminjaman.edit',$item->id) }}"
+                                        class="btn btn-success btn-sm">
+                                        Edit
+                                    </a>
 
-        @else
+                                </td>
 
-            <span class="badge badge-success">
+                            </tr>
 
-                Dikembalikan
+                            @endforeach
 
-            </span>
+                        </tbody>
 
-        @endif
+                    </table>
 
-    </td>
+                </div>
 
-    <td>
-
-        <a href="{{ route('peminjaman.edit',$item->id) }}"
-            class="btn btn-success btn-sm">
-
-            Edit
-
-        </a>
-
-        <form
-            action="{{ route('peminjaman.delete',$item->id) }}"
-            method="POST"
-            style="display:inline;"
-            onsubmit="return confirm('Yakin hapus data?')">
-
-            @csrf
-            @method('DELETE')
-
-            <button class="btn btn-danger btn-sm">
-
-                Hapus
-
-            </button>
-
-        </form>
-
-    </td>
-
-</tr>
-
-@endforeach
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-</div>
-</div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -171,13 +151,11 @@
 @section('scripts')
 
 <script>
+    $(document).ready(function() {
 
-$(document).ready(function(){
+        $('#tabelPeminjaman').DataTable();
 
-    $('#tabelPeminjaman').DataTable();
-
-});
-
+    });
 </script>
 
 @endsection

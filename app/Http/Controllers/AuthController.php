@@ -28,11 +28,11 @@ class AuthController extends Controller
             // Cek role
             if (Auth::user()->role == 'admin') {
 
-                return redirect()->route('dashboard');
+                return redirect('/Perpustakaan/admin');
 
             } else {
 
-                return redirect()->route('user.dashboard');
+                return redirect('/Perpustakaan/user');
 
             }
         }
@@ -52,6 +52,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/Perpustakaan/login');
     }
 }

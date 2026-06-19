@@ -452,7 +452,7 @@
 
             <div class="brand-logo">
 
-                <a href="{{ url('/') }}">
+                <a href="{{ auth()->check() ? (auth()->user()->role == 'admin' ? route('dashboard') : route('user.dashboard')) : url('/Perpustakaan/login') }}">
                     <img src="{{ asset('assets/images/logo_perpus.png') }}" alt="Logo">
                     <span class="brand-title" style="color: #F8FAFC !important; font-weight: 700; font-size: 1.4rem; letter-spacing: 0.5px; margin-top: 2px;">Perpustakaan</span>
                 </a>

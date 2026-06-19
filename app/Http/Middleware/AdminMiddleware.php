@@ -16,7 +16,7 @@ class AdminMiddleware
     {
         // Belum login
         if (!Auth::check()) {
-            return redirect('/login');
+            return redirect('/Perpustakaan/login');
         }
 
         // Bukan admin

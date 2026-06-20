@@ -77,7 +77,7 @@ Anda dapat menggunakan akun berikut untuk mengeksplorasi sistem:
 | Role      | Email              | Password   | Deskripsi                                                             |
 | :-------- | :----------------- | :--------- | :-------------------------------------------------------------------- |
 | **Admin** | `admin@perpus.com` | `password` | Memiliki akses penuh ke seluruh modul konfigurasi dan transaksi.      |
-| **User**  | `user@perpus.com`  | `password` | Akun anggota (ANG-001) untuk mencoba simulasi peminjaman dan riwayat. |
+| **User**  | `user@perpus.com`  | `password` | Akun anggota (AGT0001) untuk mencoba simulasi peminjaman dan riwayat. |
 
 ---
 

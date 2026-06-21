@@ -25,15 +25,22 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
+            // Cek status sanksi (Freeze)
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $statusSanksi = $user->cekStatusSanksi();
+            if ($statusSanksi['status'] === 'frozen') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect('/Perpustakaan/login')->with('error', 'Akun Anda dibekukan. Silakan lunasi pembayaran tagihan denda secara manual dan offline di Library Office!');
+            }
+
             // Cek role
-            if (Auth::user()->role == 'admin') {
-
+            if (Auth::user()->role === 'admin') {
                 return redirect('/Perpustakaan/admin');
-
             } else {
-
                 return redirect('/Perpustakaan/user');
-
             }
         }
 

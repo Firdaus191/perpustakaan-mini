@@ -12,7 +12,7 @@ class AnggotaController extends Controller
     // TAMPIL DATA
     public function index()
     {
-        $anggota = Anggota::all();
+        $anggota = Anggota::with('user')->get();
 
         return view('anggota.index', compact('anggota'));
     }
@@ -29,30 +29,31 @@ class AnggotaController extends Controller
         try {
 
             $request->validate([
-                'kode_anggota' => 'required|unique:anggotas,kode_anggota',
-                'nama' => 'required',
-                'email' => 'required|email|unique:anggotas,email|unique:users,email',
-                'jenis_kelamin' => 'required',
-                'alamat' => 'required',
-                'no_hp' => 'required',
+                'kode_anggota' => 'required|unique:anggotas,kode_anggota|max:50',
+                'nama' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'jenis_kelamin' => 'required|in:L,P',
+                'alamat' => 'required|string|max:500',
+                'no_hp' => 'required|numeric|digits_between:10,15',
+            ]);
+
+            // Otomatis buat akun login
+            $user = User::create([
+                'name' => $request->nama,
+                'email' => $request->email,
+                'password' => Hash::make('12345678'),
+                'role' => 'user',
             ]);
 
             // Simpan anggota
             Anggota::create([
                 'kode_anggota' => $request->kode_anggota,
                 'nama' => $request->nama,
-                'email' => $request->email,
+                // 'email' => $request->email, // Dihapus karena single source of truth di tabel users
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
-            ]);
-
-            // Otomatis buat akun login
-            User::create([
-                'name' => $request->nama,
-                'email' => $request->email,
-                'password' => Hash::make('12345678'),
-                'role' => 'user',
+                'user_id' => $user->id,
             ]);
 
             return redirect()
@@ -61,13 +62,11 @@ class AnggotaController extends Controller
                     'success',
                     'Data anggota berhasil ditambahkan. Password login default: 12345678'
                 );
-
         } catch (\Exception $e) {
 
             return back()
                 ->withInput()
                 ->with('error', 'Gagal: ' . $e->getMessage());
-
         }
     }
 
@@ -86,29 +85,27 @@ class AnggotaController extends Controller
 
             $anggota = Anggota::findOrFail($id);
 
+            // Hapus unique:anggotas,email karena email hanya ada di users
             $request->validate([
-                'kode_anggota' => 'required|unique:anggotas,kode_anggota,' . $id,
-                'email' => 'required|email',
-                'nama' => 'required',
-                'jenis_kelamin' => 'required',
-                'alamat' => 'required',
-                'no_hp' => 'required',
+                'kode_anggota' => 'required|max:50|unique:anggotas,kode_anggota,' . $id,
+                'email' => 'required|email|max:255|unique:users,email,' . ($anggota->user_id ?? 0),
+                'nama' => 'required|string|max:255',
+                'jenis_kelamin' => 'required|in:L,P',
+                'alamat' => 'required|string|max:500',
+                'no_hp' => 'required|numeric|digits_between:10,15',
             ]);
-
-            $user = User::where('email', $anggota->getOriginal('email'))->first();
 
             $anggota->update([
                 'kode_anggota' => $request->kode_anggota,
                 'nama' => $request->nama,
-                'email' => $request->email,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
             ]);
 
             // Update juga data user jika ada
-            if ($user) {
-                $user->update([
+            if ($anggota->user) {
+                $anggota->user->update([
                     'name' => $request->nama,
                     'email' => $request->email,
                 ]);
@@ -117,13 +114,11 @@ class AnggotaController extends Controller
             return redirect()
                 ->route('anggota.index')
                 ->with('success', 'Data anggota berhasil diperbarui');
-
         } catch (\Exception $e) {
 
             return back()
                 ->withInput()
                 ->with('error', 'Gagal update: ' . $e->getMessage());
-
         }
     }
 
@@ -135,7 +130,9 @@ class AnggotaController extends Controller
             $anggota = Anggota::findOrFail($id);
 
             // Hapus akun user jika ada
-            User::where('email', $anggota->email)->delete();
+            if ($anggota->user) {
+                $anggota->user->delete();
+            }
 
             // Hapus anggota
             $anggota->delete();
@@ -143,13 +140,11 @@ class AnggotaController extends Controller
             return redirect()
                 ->route('anggota.index')
                 ->with('success', 'Data anggota berhasil dihapus');
-
         } catch (\Exception $e) {
 
             return redirect()
                 ->route('anggota.index')
                 ->with('error', 'Gagal menghapus data');
-
         }
     }
 }

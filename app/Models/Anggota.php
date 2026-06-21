@@ -14,6 +14,12 @@ class Anggota extends Model
         'jenis_kelamin',
         'alamat',
         'no_hp',
-        'email'
+        'user_id',
+        'status_akun'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

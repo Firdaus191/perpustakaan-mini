@@ -5,14 +5,37 @@
 @section('content')
 
 <style>
-    .border-left-primary { border-left: 4px solid #4e73df !important; }
-    .border-left-success { border-left: 4px solid #1cc88a !important; }
-    .border-left-warning { border-left: 4px solid #f6c23e !important; }
-    .border-left-danger { border-left: 4px solid #e74a3b !important; }
-    .text-primary { color: #4e73df !important; }
-    .text-success { color: #1cc88a !important; }
-    .text-warning { color: #f6c23e !important; }
-    .text-danger { color: #e74a3b !important; }
+    .border-left-primary {
+        border-left: 4px solid #4e73df !important;
+    }
+
+    .border-left-success {
+        border-left: 4px solid #1cc88a !important;
+    }
+
+    .border-left-warning {
+        border-left: 4px solid #f6c23e !important;
+    }
+
+    .border-left-danger {
+        border-left: 4px solid #e74a3b !important;
+    }
+
+    .text-primary {
+        color: #4e73df !important;
+    }
+
+    .text-success {
+        color: #1cc88a !important;
+    }
+
+    .text-warning {
+        color: #f6c23e !important;
+    }
+
+    .text-danger {
+        color: #e74a3b !important;
+    }
 </style>
 
 <!-- Row 1: Master Data -->
@@ -132,6 +155,7 @@
                                 <th>Jatuh Tempo</th>
                                 <th>Terlambat</th>
                                 <th>Denda</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,7 +166,15 @@
                                 <td>{{ $trx->buku->judul }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trx->tanggal_kembali)->format('d M Y') }}</td>
                                 <td><span class="badge badge-danger">{{ $trx->telat_hari }} Hari</span></td>
-                                <td>Rp {{ number_format($trx->total_denda, 0, ',', '.') }}</td>
+                                <td>
+                                    Rp {{ number_format($trx->total_denda, 0, ',', '.') }}
+                                    @if($trx->status_denda == 'menunggu_konfirmasi')
+                                    <br><span class="badge badge-warning mt-1">Menunggu Konfirmasi</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('peminjaman.index') }}" class="btn btn-sm btn-primary">Lihat Transaksi</a>
+                                </td>
                             </tr>
                             @empty
                             <tr>

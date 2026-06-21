@@ -36,6 +36,7 @@ Route::prefix('Perpustakaan')->group(function () {
             ->name('login');
 
         Route::post('/login', [AuthController::class, 'authenticate'])
+            ->middleware('throttle:5,1')
             ->name('login.post');
 
         // Register
@@ -52,7 +53,7 @@ Route::prefix('Perpustakaan')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'check.account'])->group(function () {
 
         // Logout
         Route::post('/logout', [AuthController::class, 'logout'])
@@ -84,6 +85,10 @@ Route::prefix('Perpustakaan')->group(function () {
         // kembalikan Buku
         Route::post('/user/kembalikan/{id}', [UserController::class, 'kembalikan'])
             ->name('user.kembalikan');
+
+        // Bayar Denda
+        Route::post('/user/bayar-denda', [UserController::class, 'bayarDenda'])
+            ->name('user.bayarDenda');
     });
 
     /*
@@ -197,6 +202,12 @@ Route::prefix('Perpustakaan')->group(function () {
 
         Route::post('/peminjaman/perpanjang/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'perpanjangWaktu'])
             ->name('peminjaman.perpanjang');
+
+        Route::post('/peminjaman/verifikasi/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'verifikasiPembayaran'])
+            ->name('peminjaman.verifikasi');
+
+        Route::post('/peminjaman/tolak/{id}', [\App\Http\Controllers\AdminTransaksiController::class, 'tolakPembayaran'])
+            ->name('peminjaman.tolak');
 
         /*
         |--------------------------------------------------------------------------

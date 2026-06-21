@@ -10,9 +10,24 @@ use Illuminate\Support\Facades\Storage;
 class BukuController extends Controller
 {
     // TAMPIL DATA
-    public function index()
+    public function index(Request $request)
     {
-        $buku = Buku::with('kategori')->get();
+        $query = Buku::with('kategori');
+
+        // Search
+        if ($request->has('search') && $request->search != '') {
+            $query->where('judul', 'like', '%' . $request->search . '%')
+                ->orWhere('penulis', 'like', '%' . $request->search . '%');
+        }
+
+        // Sort
+        if ($request->has('sort') && $request->has('order')) {
+            $query->orderBy($request->sort, $request->order);
+        } else {
+            $query->latest(); // Default urutan terbaru
+        }
+
+        $buku = $query->paginate(10)->withQueryString();
 
         return view('buku.index', compact('buku'));
     }
@@ -26,20 +41,9 @@ class BukuController extends Controller
     }
 
     // SIMPAN DATA
-    public function store(Request $request)
+    public function store(\App\Http\Requests\BukuRequest $request)
     {
         try {
-
-            $request->validate([
-                'kode_buku' => 'required|unique:bukus',
-                'judul' => 'required',
-                'penulis' => 'required',
-                'penerbit' => 'required',
-                'tahun_terbit' => 'required',
-                'kategori_id' => 'required',
-                'stok' => 'required',
-                'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-            ]);
 
             $filename = null;
             if ($request->hasFile('cover_image')) {
@@ -79,22 +83,11 @@ class BukuController extends Controller
     }
 
     // UPDATE
-    public function update(Request $request, int $id)
+    public function update(\App\Http\Requests\BukuRequest $request, int $id)
     {
         try {
 
             $buku = Buku::findOrFail($id);
-
-            $request->validate([
-                'kode_buku' => 'required|unique:bukus,kode_buku,' . $id,
-                'judul' => 'required',
-                'penulis' => 'required',
-                'penerbit' => 'required',
-                'tahun_terbit' => 'required',
-                'kategori_id' => 'required',
-                'stok' => 'required',
-                'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-            ]);
 
             $filename = $buku->cover_image;
             if ($request->hasFile('cover_image')) {

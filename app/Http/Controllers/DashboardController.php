@@ -36,15 +36,23 @@ class DashboardController extends Controller
             ->whereDate('tanggal_kembali', '<', now())
             ->get();
 
+        // Update denda real-time untuk semua anggota yang terlambat
+        $anggotaIds = $peminjamanTerlambat->pluck('anggota_id')->unique();
+        foreach ($anggotaIds as $anggotaId) {
+            Peminjaman::updateDendaAnggota($anggotaId);
+        }
+
+        // Reload data setelah update denda
+        $peminjamanTerlambat = Peminjaman::with(['anggota', 'buku'])
+            ->where('status', 'dipinjam')
+            ->whereDate('tanggal_kembali', '<', now())
+            ->get();
+
         foreach ($peminjamanTerlambat as $trx) {
             $jatuhTempo = \Carbon\Carbon::parse($trx->tanggal_kembali)->startOfDay();
             $hariIni = \Carbon\Carbon::now()->startOfDay();
-            $trx->telat_hari = 0;
-            $trx->total_denda = 0;
-            if ($hariIni->greaterThan($jatuhTempo) && $trx->status == 'dipinjam') {
-                $trx->telat_hari = $jatuhTempo->diffInDays($hariIni);
-                $trx->total_denda = $trx->telat_hari * 2000;
-            }
+            $trx->telat_hari = (int) $jatuhTempo->diffInDays($hariIni);
+            $trx->total_denda = $trx->denda;
         }
 
         return view(

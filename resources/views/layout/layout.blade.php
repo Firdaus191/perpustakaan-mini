@@ -415,6 +415,32 @@
             background-color: #1E293B !important;
             background: #1E293B !important;
         }
+
+        /* --- PRINT MEDIA QUERY UNTUK CETAK STRUK MODAL --- */
+        @media print {
+            body.printing-modal * {
+                visibility: hidden;
+            }
+
+            body.printing-modal .print-active,
+            body.printing-modal .print-active * {
+                visibility: visible;
+            }
+
+            body.printing-modal .print-active {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                /* Agar hasil cetak terang */
+                color: black !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -491,10 +517,12 @@
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown" style="z-index: 1050;">
                             <a class="dropdown-item" href="{{ route('profile.edit') }}">Edit Profil</a>
                             <div class="dropdown-divider"></div>
-                            <form action="{{ route('logout') }}" method="POST" class="px-3 pb-2 pt-1 m-0">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm btn-block">Logout</button>
                             </form>
+                            <div class="px-3 pb-2 pt-1 m-0">
+                                <button type="button" onclick="confirmLogout(event)" class="btn btn-danger btn-sm btn-block">Logout</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -523,7 +551,10 @@
 
                         <a href="{{ route('dashboard') }}">
 
-                            <i class="icon-speedometer menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -539,7 +570,9 @@
 
                         <a class="has-arrow" href="javascript:void(0)">
 
-                            <i class="icon-grid menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -554,9 +587,11 @@
                             <li>
 
                                 <a href="{{ route('kategori.index') }}">
-
+                                    <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                                    </svg>
                                     Data Kategori
-
                                 </a>
 
                             </li>
@@ -564,9 +599,10 @@
                             <li>
 
                                 <a href="{{ route('buku.index') }}">
-
+                                    <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                    </svg>
                                     Data Buku
-
                                 </a>
 
                             </li>
@@ -574,9 +610,10 @@
                             <li>
 
                                 <a href="{{ route('anggota.index') }}">
-
+                                    <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                    </svg>
                                     Data Anggota
-
                                 </a>
 
                             </li>
@@ -589,7 +626,9 @@
 
                         <a class="has-arrow" href="javascript:void(0)">
 
-                            <i class="icon-book-open menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -604,9 +643,10 @@
                             <li>
 
                                 <a href="{{ route('peminjaman.index') }}">
-
+                                    <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25" />
+                                    </svg>
                                     Peminjaman
-
                                 </a>
 
                             </li>
@@ -614,9 +654,10 @@
                             <li>
 
                                 <a href="{{ route('pengembalian.index') }}">
-
+                                    <svg class="w-5 h-5" style="width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                                    </svg>
                                     Pengembalian
-
                                 </a>
 
                             </li>
@@ -633,7 +674,10 @@
 
                         <a href="{{ route('user.dashboard') }}">
 
-                            <i class="icon-speedometer menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -649,7 +693,9 @@
 
                         <a href="{{ route('user.buku') }}">
 
-                            <i class="icon-book-open menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -665,7 +711,9 @@
 
                         <a href="{{ route('user.riwayat') }}">
 
-                            <i class="icon-notebook menu-icon"></i>
+                            <svg style="width: 1.5rem; height: 1.5rem; display: inline-block; vertical-align: middle; margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
 
                             <span class="nav-text">
 
@@ -827,6 +875,59 @@
                 });
             }, 100);
         });
+
+        // Logout Confirmation Function
+        function confirmLogout(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: 'Apakah Anda yakin ingin keluar dari aplikasi?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'Ya, Keluar',
+                cancelButtonText: 'Batal',
+                background: '#1E293B',
+                color: '#F8FAFC'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        }
+        // Mencegah Double Submit pada semua Form secara Global
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.tagName === 'FORM') {
+                // Abaikan form GET (seperti form pencarian)
+                if (e.target.method.toUpperCase() === 'GET') return;
+
+                const submitBtn = e.target.querySelector('button[type="submit"], input[type="submit"]');
+                if (submitBtn) {
+                    if (submitBtn.disabled) {
+                        e.preventDefault();
+                        return;
+                    }
+                    // Gunakan setTimeout agar form tetap memproses data sebelum tombol didisable
+                    setTimeout(() => {
+                        submitBtn.disabled = true;
+                        if (!submitBtn.dataset.originalText) {
+                            submitBtn.dataset.originalText = submitBtn.innerHTML;
+                        }
+                        submitBtn.innerHTML = 'Memproses...';
+                    }, 0);
+                }
+            }
+        });
+
+        // Global Print Modal Function
+        function printModal(modalId) {
+            document.body.classList.add('printing-modal');
+            document.getElementById(modalId).classList.add('print-active');
+            window.print();
+            document.body.classList.remove('printing-modal');
+            document.getElementById(modalId).classList.remove('print-active');
+        }
     </script>
 </body>
 

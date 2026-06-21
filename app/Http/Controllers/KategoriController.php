@@ -10,7 +10,7 @@ class KategoriController extends Controller
     // TAMPIL DATA
     public function index()
     {
-        $kategori = Kategori::all();
+        $kategori = Kategori::get();
 
         return view('kategori.index', compact('kategori'));
     }
@@ -39,7 +39,6 @@ class KategoriController extends Controller
 
             return redirect()->route('kategori.index')
                 ->with('success', 'Kategori berhasil ditambahkan');
-
         } catch (\Exception $e) {
 
             return back()->with('error', $e->getMessage());
@@ -47,43 +46,41 @@ class KategoriController extends Controller
     }
 
     // FORM EDIT
-public function edit(int $id)
-{
-    $kategori = Kategori::findOrFail($id);
-
-    return view('kategori.edit', compact('kategori'));
-}
-
-// UPDATE
-public function update(Request $request, int $id)
-{
-    try {
-
-        $request->validate([
-            'kode_kategori' => 'required|unique:kategoris,kode_kategori,' . $id,
-            'nama_kategori' => 'required'
-        ]);
-
+    public function edit(int $id)
+    {
         $kategori = Kategori::findOrFail($id);
 
-        $kategori->update([
-            'kode_kategori' => $request->kode_kategori,
-            'nama_kategori' => $request->nama_kategori,
-            'keterangan' => $request->keterangan,
-        ]);
-
-        return redirect()
-            ->route('kategori.index')
-            ->with('success', 'Kategori berhasil diperbarui');
-
-    } catch (\Exception $e) {
-
-        return back()
-            ->withInput()
-            ->with('error', 'Gagal update: ' . $e->getMessage());
-
+        return view('kategori.edit', compact('kategori'));
     }
-}
+
+    // UPDATE
+    public function update(Request $request, int $id)
+    {
+        try {
+
+            $request->validate([
+                'kode_kategori' => 'required|unique:kategoris,kode_kategori,' . $id,
+                'nama_kategori' => 'required'
+            ]);
+
+            $kategori = Kategori::findOrFail($id);
+
+            $kategori->update([
+                'kode_kategori' => $request->kode_kategori,
+                'nama_kategori' => $request->nama_kategori,
+                'keterangan' => $request->keterangan,
+            ]);
+
+            return redirect()
+                ->route('kategori.index')
+                ->with('success', 'Kategori berhasil diperbarui');
+        } catch (\Exception $e) {
+
+            return back()
+                ->withInput()
+                ->with('error', 'Gagal update: ' . $e->getMessage());
+        }
+    }
 
     // DELETE
     public function delete(int $id)

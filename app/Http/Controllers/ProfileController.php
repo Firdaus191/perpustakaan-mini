@@ -27,8 +27,6 @@ class ProfileController extends Controller
 
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request) {
-                // Simpan email lama untuk mencari di tabel Anggota
-                $oldEmail = $user->email;
 
                 $user->name = $request->name;
                 $user->email = $request->email;
@@ -39,12 +37,11 @@ class ProfileController extends Controller
 
                 $user->save();
 
-                // Sinkronisasi data ke tabel anggota
-                $anggota = \App\Models\Anggota::where('email', $oldEmail)->first();
-                if ($anggota) {
-                    $anggota->update([
+                // Sinkronisasi data ke tabel anggota menggunakan relasi
+                if ($user->anggota) {
+                    $user->anggota->update([
                         'nama' => $request->name,
-                        'email' => $request->email,
+                        // 'email' => $request->email, // Dihapus karena single source of truth di tabel users
                     ]);
                 }
             });

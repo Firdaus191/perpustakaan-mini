@@ -105,7 +105,7 @@
         type="email"
         name="email"
         class="form-control"
-        value="{{ $anggota->email }}">
+        value="{{ $anggota->user->email ?? '' }}">
 
 </div>
 

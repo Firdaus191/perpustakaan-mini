@@ -26,27 +26,61 @@
                 </div>
                 @endif
 
-                <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-between mb-3 align-items-center">
+                    <form method="GET" action="{{ route('buku.index') }}" class="m-0">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Cari judul atau penulis..." value="{{ request('search') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+                            </div>
+                        </div>
+                    </form>
 
-                    <a href="{{ route('buku.create') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('buku.create') }}" class="btn btn-primary">
                         + Tambah Buku
                     </a>
-
                 </div>
 
                 <div class="table-responsive">
 
-                    <table id="tabelBuku" class="table table-striped table-bordered">
+                    <table class="table table-striped table-bordered">
 
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Cover</th>
                                 <th>Kode</th>
-                                <th>Judul Buku</th>
-                                <th>Penulis</th>
+                                <th>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'judul', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}" class="text-dark text-decoration-none d-flex align-items-center justify-content-between">
+                                        Judul Buku
+                                        @if(request('sort') == 'judul')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                        @else
+                                        <i class="fas fa-sort ms-1 text-muted"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'penulis', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}" class="text-dark text-decoration-none d-flex align-items-center justify-content-between">
+                                        Penulis
+                                        @if(request('sort') == 'penulis')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                        @else
+                                        <i class="fas fa-sort ms-1 text-muted"></i>
+                                        @endif
+                                    </a>
+                                </th>
                                 <th>Penerbit</th>
-                                <th>Tahun</th>
+                                <th>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort' => 'tahun_terbit', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}" class="text-dark text-decoration-none d-flex align-items-center justify-content-between">
+                                        Tahun
+                                        @if(request('sort') == 'tahun_terbit')
+                                        <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                        @else
+                                        <i class="fas fa-sort ms-1 text-muted"></i>
+                                        @endif
+                                    </a>
+                                </th>
                                 <th>Kategori</th>
                                 <th>Stok</th>
                                 <th>Aksi</th>
@@ -59,13 +93,17 @@
 
                             <tr>
 
-                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $buku->firstItem() + $index }}</td>
 
                                 <td>
                                     @if($item->cover_image)
-                                    <img src="{{ asset('storage/covers/'.$item->cover_image) }}" alt="Cover" style="width: 50px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                    <img src="{{ Str::startsWith($item->cover_image, ['http://', 'https://']) ? $item->cover_image : asset('storage/covers/' . $item->cover_image) }}"
+                                        alt="Cover {{ $item->judul }}"
+                                        class="w-12 h-16 object-cover rounded shadow-sm" style="width: 48px; height: 64px; object-fit: cover;">
                                     @else
-                                    <span class="badge badge-secondary">No Cover</span>
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($item->judul) }}&background=random&color=fff&size=400&font-size=0.33"
+                                        alt="Cover {{ $item->judul }}"
+                                        class="w-12 h-16 object-cover rounded shadow-sm" style="width: 48px; height: 64px; object-fit: cover;">
                                     @endif
                                 </td>
 
@@ -119,23 +157,76 @@
 
                     </table>
 
+                    <div class="custom-pagination-container">
+                        <div class="pagination-info">
+                            Showing {{ $buku->firstItem() }} to {{ $buku->lastItem() }} of {{ $buku->total() }} entries
+                        </div>
+                        <div class="pagination-buttons">
+                            {{ $buku->links('pagination::bootstrap-4') }}
+                        </div>
+                    </div>
+
+                    <style>
+                        .custom-pagination-container {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            width: 100%;
+                            margin-top: 1rem;
+                            padding-bottom: 1rem;
+                        }
+
+                        .pagination-info {
+                            color: #9ca3af;
+                            /* Warna teks abu-abu terang */
+                            font-size: 0.875rem;
+                        }
+
+                        .pagination-buttons .pagination {
+                            display: flex;
+                            gap: 0.25rem;
+                            margin: 0;
+                            padding: 0;
+                            list-style: none;
+                        }
+
+                        .pagination-buttons .page-item .page-link {
+                            background-color: transparent;
+                            border: 1px solid #374151;
+                            /* Border abu-abu gelap */
+                            color: #d1d5db;
+                            padding: 0.375rem 0.75rem;
+                            border-radius: 0.375rem;
+                            /* Membuat sudut agak membulat */
+                            text-decoration: none;
+                            font-size: 0.875rem;
+                        }
+
+                        .pagination-buttons .page-item.active .page-link {
+                            background-color: #3b82f6;
+                            /* Warna biru */
+                            border-color: #3b82f6;
+                            color: #ffffff;
+                        }
+
+                        .pagination-buttons .page-item.disabled .page-link {
+                            color: #6b7280;
+                            pointer-events: none;
+                            background-color: transparent;
+                            border-color: #374151;
+                        }
+
+                        /* Menghilangkan panah raksasa/SVG bawaan Laravel Tailwind jika ada */
+                        .pagination-buttons svg {
+                            display: none !important;
+                        }
+                    </style>
+
                 </div>
 
             </div>
         </div>
     </div>
 </div>
-
-@endsection
-
-@section('scripts')
-
-<script>
-    $(document).ready(function() {
-
-        $('#tabelBuku').DataTable();
-
-    });
-</script>
 
 @endsection

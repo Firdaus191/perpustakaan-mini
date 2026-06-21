@@ -28,7 +28,7 @@ class RegisterController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                User::create([
+                $user = User::create([
                     'name' => $request->name,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
@@ -40,9 +40,10 @@ class RegisterController extends Controller
                 $kodeAnggota = 'AGT' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
                 Anggota::create([
+                    'user_id' => $user->id,
                     'kode_anggota' => $kodeAnggota,
                     'nama' => $request->name,
-                    'email' => $request->email,
+                    // 'email' => $request->email, // Dihapus karena single source of truth di tabel users
                     'no_hp' => $request->no_hp,
                     'jenis_kelamin' => $request->jenis_kelamin,
                     'alamat' => $request->alamat,

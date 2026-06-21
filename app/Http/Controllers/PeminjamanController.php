@@ -13,6 +13,16 @@ class PeminjamanController extends Controller
     // TAMPIL DATA
     public function index()
     {
+        // Update denda real-time untuk anggota yang terlambat
+        $peminjamanTerlambat = Peminjaman::where('status', 'dipinjam')
+            ->whereDate('tanggal_kembali', '<', now())
+            ->pluck('anggota_id')
+            ->unique();
+
+        foreach ($peminjamanTerlambat as $anggotaId) {
+            Peminjaman::updateDendaAnggota($anggotaId);
+        }
+
         $peminjaman = Peminjaman::with(['anggota', 'buku'])->get();
 
         return view('peminjaman.index', compact('peminjaman'));
@@ -22,7 +32,7 @@ class PeminjamanController extends Controller
     public function create()
     {
         $anggota = Anggota::all();
-        $buku = Buku::all();
+        $buku = Buku::with('kategori')->get();
 
         return view('peminjaman.create', compact('anggota', 'buku'));
     }
@@ -30,6 +40,15 @@ class PeminjamanController extends Controller
     // SIMPAN DATA
     public function store(Request $request)
     {
+        // Cek sanksi dinamis sebelum menambah peminjaman
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role !== 'admin') {
+            /** @var \App\Models\User $currentUser */
+            $currentUser = \Illuminate\Support\Facades\Auth::user();
+            $sanksi = $currentUser->cekStatusSanksi();
+            if (in_array($sanksi['status'], ['suspended', 'frozen'])) {
+                return back()->with('error', 'Transaksi DITOLAK! Akun ditangguhkan karena denda belum lunas. Silakan lunasi terlebih dahulu.');
+            }
+        }
         try {
             $request->validate([
                 'anggota_id' => 'required',
@@ -79,7 +98,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
         $anggota = Anggota::all();
-        $buku = Buku::all();
+        $buku = Buku::with('kategori')->get();
 
         return view('peminjaman.edit', compact(
             'peminjaman',
@@ -96,14 +115,10 @@ class PeminjamanController extends Controller
                 $peminjaman = Peminjaman::findOrFail($id);
                 $statusLama = $peminjaman->getOriginal('status');
 
-                // Jika booking disetujui menjadi dipinjam
+                // Jika booking disetujui menjadi dipinjam, JANGAN KURANGI STOK LAGI
+                // karena stok sudah dipotong pada saat user menekan booking.
                 if ($statusLama == 'booking' && $request->status == 'dipinjam') {
-                    $buku = Buku::where('id', $peminjaman->buku_id)->lockForUpdate()->firstOrFail();
-                    $buku->stok -= 1;
-                    if ($buku->stok <= 0) {
-                        $buku->status = 'dipinjam';
-                    }
-                    $buku->save();
+                    // Do nothing for stock
                 }
                 // Jika status berubah menjadi Dikembalikan,
                 // tambahkan stok buku kembali

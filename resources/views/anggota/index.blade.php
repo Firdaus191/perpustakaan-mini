@@ -80,7 +80,7 @@
 
                                 <td>{{ $item->no_hp }}</td>
 
-                                <td>{{ $item->email }}</td>
+                                <td>{{ $item->user->email ?? 'Email tidak ditemukan' }}</td>
 
                                 <td>
 

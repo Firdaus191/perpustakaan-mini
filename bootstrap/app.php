@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Middleware Role
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            
+            // Middleware Account Status Check (sanksi dinamis)
+            'check.account' => \App\Http\Middleware\CheckAccountStatus::class,
         ]);
 
     })
